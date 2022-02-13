@@ -40,6 +40,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # custom apps
+    'orders.apps.OrdersConfig',
+    'customers.apps.CustomersConfig',
+    'employees.apps.EmployeesConfig',
+    'incomes.apps.IncomesConfig',
+    'expense.apps.ExpenseConfig',
+    "users.apps.UsersConfig",
 
     # 3rd party apps
 
