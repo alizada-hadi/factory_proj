@@ -1,0 +1,91 @@
+{% extends 'main.html' %}
+
+{% block title  %}
+    مشتریان
+{% endblock title %}
+
+{% block page_title %} 
+لیست مشتریان
+{% endblock page_title %}
+
+{% block breadcrumb %} 
+<div class="page-title-right">
+    <ol class="breadcrumb m-0">
+        <li class="breadcrumb-item"><a href="/">صفحه اصلی</a></li>
+        <li class="breadcrumb-item active">لیست مشتریان</li>
+    </ol>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+<div class="row">
+    <div class="col-xl-10 m-auto">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h3 class="mb-4 text-muted" style="font-weight: bold;">لیست تمام مشتریان</h3>
+                    </div>
+                    <div class="col-lg-6">
+                        <a href="{% url 'customer-create' %}" class="float-right btn btn-dark btn-lg mb-4 ">
+                            ثبت مشتری جدید
+                            <i class="bx bx-plus font-size-22 align-middle"></i>
+                        </a>
+                    </div>
+                </div>
+                <table id="datatable" class="table table-bordered dt-responsive nowrap"
+                    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th class="font-size-17">شماره
+                                <i class="bx bx-plus align-middle font-size-22"></i>
+                            </th>
+                            <th class="font-size-17">نام مشتری
+                                <i class='bx bx-user align-middle font-size-22 ' ></i>
+                            </th>
+                            <th class="font-size-17">شماره تماس
+                                <i class='bx bx-phone-call align-middle font-size-22 ' ></i>
+                            </th>
+                            <th class="font-size-17">شماره واتساپ
+                                <i class='bx bxl-whatsapp font-size-22 align-middle '></i>
+                            </th>
+                            <th class="font-size-17">آدرس مشتری
+                                <i class='bx bx-map-pin font-size-22 align-middle' ></i>
+                            </th>
+                            <th class="font-size-17">عملیات
+                                <i class='bx bx-cog font-size-22 align-middle ' ></i>
+                            </th>
+                        </tr>
+                    </thead>
+
+
+                    <tbody>
+                        {% for customer in customers %}
+                            <tr>
+                                <td class="font-size-16">{{forloop.counter}}</td>
+                                <td class="font-size-16">{{customer.name}} - {{customer.last_name}}</td>
+                                <td class="font-size-16">{{customer.phone_number}}</td>
+                                <td class="font-size-16">
+                                    {% if customer.social_number %}
+                                        {{customer.social_number}}
+                                    {% else %}
+                                        ندارد
+                                    {% endif %}
+                                </td>
+                                <td class="font-size-16">{{customer.address}}</td>
+                                <td class="font-size-16">
+                                    <a href="{% url 'customer-update' customer.pk %}" class="btn btn-info btn-sm font-size-14">ویرایش</a>
+                                    <a href="{% url 'customer-delete' customer.pk %}" class="btn btn-danger btn-sm font-size-14">حذف</a>
+                                    <button class="btn btn-success btn-sm font-size-14">فرمایشات</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
