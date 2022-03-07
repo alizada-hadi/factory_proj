@@ -28,4 +28,7 @@ class EmployeeAttendance(models.Model):
     date = models.DateField()
 
 
+    
+
+
 

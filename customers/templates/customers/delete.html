@@ -46,8 +46,8 @@
                     </p>
                     <h4 style="font-weight: bold;">جزییات فرمایشات {{customer.name}} - {{customer.last_name}} </h4>
                     {% for order in customer.order_set.all %}
-                        <ul>
-                            <li>{{order.service_name}}</li>
+                        <ul class="ml-4">
+                            <li>{{order.service_name}} از تاریخ {{order.order_date}}</li>
                         </ul>
                     {% empty %}
                         <p class="alert alert-info text-center">هیچ فرمایشی موجود نیست.</p>

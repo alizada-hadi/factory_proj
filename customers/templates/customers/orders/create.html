@@ -1,0 +1,185 @@
+{% extends 'main.html' %}
+
+{% block title  %}
+    مشتریان
+{% endblock title %}
+
+{% block page_title %} 
+ایجاد فرمایش جدید برای {{customer.name}} - {{customer.last_name}}
+{% endblock page_title %}
+
+{% block breadcrumb %} 
+<div class="page-title-right">
+    <ol class="breadcrumb m-0">
+        <li class="breadcrumb-item"><a href="/">صفحه اصلی</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'customer-list' %}">لیست مشتریان</a></li>
+        <li class="breadcrumb-item active">
+            ایجاد فرمایش جدید برای {{customer.name}} - {{customer.last_name}}
+        </li>
+    </ol>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+<script
+  src="https://code.jquery.com/jquery-3.6.0.js"
+  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  crossorigin="anonymous"></script>
+<div class="row">
+    <div class="col-xl-12 m-auto">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h3 class="mb-4 text-muted" style="font-weight: bold;">
+                            ایجاد فرمایش جدید برای {{customer.name}} - {{customer.last_name}}                               
+                        </h3>
+                    </div>
+                    <div class="col-lg-6">
+                        <a href="{% url 'customer-list' %}" class="btn btn-dark btn-lg mb-4 float-right ">
+                            برگشت
+                            <i class='bx bx-arrow-back font-size-22 align-middle' ></i>
+                        </a>
+                        <a href="{% url 'customer-report' customer.pk %}" class="btn btn-primary btn-lg mb-4 mr-2 float-right ">
+                            گزارشات
+                            <i class='bx bxs-report font-size-22 align-middle' ></i>
+                        </a>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-lg-6 border-right">
+                        <h4 class="mb-4">جزییات فرمایش</h4>
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="customer" value="{{customer.id}}">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">نوع کار</label>
+                                    <select required name="service_name" class="form-control font-size-17" id="service">
+                                        <option value="">نوع کار</option>
+                                        <optgroup>
+                                            <option value="door">دروازه</option>
+                                            <option value="window">کلکین</option>
+                                            <option value="cnc">سی ان سی</option>
+                                            <option value="press">پرس</option>
+                                            <option value="zdoor">ضد سرقت</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">ارتفاع</label>
+                                    <input type="number" name="height" placeholder="175cm" class="form-control font-size-17" required >
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">بر</label>
+                                    <input type="number" name="width" placeholder="140cm" class="form-control font-size-17" required>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">عمق</label>
+                                    <input type="number" name="depth" placeholder="40cm"  class="form-control font-size-17" required>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">سمت</label>
+                                    <select name="direction" class="form-control font-size-20" id="" required>
+                                        <option value="">سمت</option>
+                                        <optgroup>
+                                            <option value="right">راست</option>
+                                            <option value="left">چپ</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">مقدار</label>
+                                    <input type="number" value="0" name="quantity" class="form-control font-size-17" required>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">قیمت فی دانه</label>
+                                    <input type="number" value="0" name="price" class="form-control font-size-17" required >
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">مقدار پرداخت شده</label>
+                                    <input type="number" value="0" name="paid" class="form-control font-size-17" required>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">نوعیت کار</label>
+                                    <input type="text" placeholder="8 ملی" required name="type" class="form-control font-size-17">
+                                </div>
+                                <div class="col-lg-6">
+                                    <label for="" class="font-size-20">تاریخ</label>
+                                    <input type="text" id="tarikh" required name="order_date" class="form-control font-size-17">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-lg mt-2">ذخیره</button>
+                        </form>
+                    </div>
+                    <div class="col-lg-6 border-left">
+                        <h4 class="mb-4">لیست فرمایشات</h4>
+
+                        <table class="table table-sm table-border table-striped">
+                            <thead>
+                                <tr>
+                                    <th>شماره</th>
+                                    <th>کار</th>
+                                    <th>اندازه</th>
+                                    <th>تاریخ کار</th>
+                                    <th>تعداد</th>
+                                    <th>مقدار کل</th>
+                                    <th>پرداخت شده</th>
+                                    <th>باقی مانده</th>
+                                    <th>عملیات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for order in orders %}
+                                    <tr>
+                                        <td>{{forloop.counter}}</td>
+                                        <td>{{order.service_name}} - {{order.type}}</td>
+                                        <td>{{order.height}} &times; {{order.width}} سانتی متر</td>
+                                        <td>{{order.order_date}}</td>
+                                        <td>{{order.quantity}}</td>
+                                        <td>{{order.total_amount|floatformat:"2"}}</td>
+                                        <td>{{order.paid|floatformat:"2"}}</td>
+                                        <td>{{order.remain|floatformat:"2"}}</td>
+                                        <td>
+                                            <a href="{% url 'order-update' order.pk %}" class="btn btn-primary btn-sm">
+                                                <i class="bx bx-edit align-middle font-size-20 "></i>
+                                            </a>
+                                            <a href="{% url 'delete-order' order.pk %}" class="btn btn-danger btn-sm">
+                                                <i class="bx bx-trash align-middle font-size-20 "></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <p class="alert alert-info text-center font-size-18">
+                                        مشتری {{customer.name}} هیچ فرمایش ثبت نکرده است.
+                                    </p>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#tarikh').persianDatepicker({
+            altField: '#tarikhAlt',
+            altFormat: 'X',
+            format: 'YYYY-MM-DD',
+            observer: true,
+        });
+    });
+</script>
+{% endblock content %}

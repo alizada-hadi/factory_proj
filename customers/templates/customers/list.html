@@ -78,7 +78,7 @@
                                 <td class="font-size-16">
                                     <a href="{% url 'customer-update' customer.pk %}" class="btn btn-info btn-sm font-size-14">ویرایش</a>
                                     <a href="{% url 'customer-delete' customer.pk %}" class="btn btn-danger btn-sm font-size-14">حذف</a>
-                                    <button class="btn btn-success btn-sm font-size-14">فرمایشات</button>
+                                    <a href="{% url 'customer-order-create' customer.pk %}" class="btn btn-success btn-sm font-size-14">فرمایشات</a>
                                 </td>
                             </tr>
                         {% endfor %}

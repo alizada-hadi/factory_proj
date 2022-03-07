@@ -1,0 +1,47 @@
+{% extends 'main.html' %}
+{% load widget_tweaks %}
+{% block title  %}
+    رویداد
+{% endblock title %}
+
+{% block page_title %} 
+حذف رویداد
+{% endblock page_title %}
+
+{% block breadcrumb %} 
+<div class="page-title-right">
+    <ol class="breadcrumb m-0">
+        <li class="breadcrumb-item"><a href="/">صفحه اصلی</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'customer-list' %}">لیست مشتریان</a></li>
+        <li class="breadcrumb-item active">حذف رویداد</li>
+    </ol>
+</div>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+<div class="row">
+    <div class="col-xl-7 m-auto">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <a href="{% url 'customer-list' %}" class="btn btn-dark btn-lg mb-4 float-right ">
+                            برگشت
+                            <i class='bx bx-arrow-back font-size-22 align-middle' ></i>
+                        </a>
+                    </div>
+                </div>
+                <form action="" method="POST">
+                    {% csrf_token %}
+
+                    <input type="hidden" name="event" value="{{event.pk}}">
+                    <p class="alert alert-warning text-center font-size-18">آیا میخواهید رویداد فوق را از سیستم حذف نمایید؟</p>
+                    <button class="btn btn-outline-danger btn-md mt-3">بلی</button>
+                    <a href="{% url 'customer-report' event.customer.pk %}" class="btn btn-outline-info btn-md mt-3">نخیر</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -29,6 +29,7 @@ class Order(models.Model):
     paid = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="مقدار رسید")
     remain = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="مقدار باقی مانده")
     total_amount = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="مجموع پول")
+    type = models.CharField(max_length=200, verbose_name="نوعیت کار")
     order_date = jmodels.jDateField(verbose_name="تاریخ فرمایش")
 
 
@@ -38,6 +39,9 @@ class Order(models.Model):
         if not self.remain:
             self.remain = self.total_amount - self.paid
         super().save(*args, **kwargs)
+
+    def total(self):
+        return self.total_amount
 
     def __str__(self):
         return self.type.customer.name
