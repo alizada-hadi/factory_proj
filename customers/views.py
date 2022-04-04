@@ -23,9 +23,9 @@ def customer_create_view(request):
     if request.method == "POST":
         form = CustomerForm(request.POST)
         if form.is_valid():
-            form.save()
+            customer = form.save()
             messages.success(request, "مشتری جدید موفقانه ثبت سیستم گردید. ")
-            return redirect("customer-list")
+            return redirect("customer-order-create", customer.pk)
     else:
         form = CustomerForm()
     context = {
@@ -83,8 +83,7 @@ def customer_order_view(request, pk):
         paid = request.POST.get("paid")
         type_of_work = request.POST.get("type")
         date = request.POST.get("order_date")
-
-
+        
         service_name = "دروازه"
         if work_type == "door":
             service_name = "دروازه"

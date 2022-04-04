@@ -6,20 +6,18 @@ from employees.models import Employee
 
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=200)
+
+
+
 class Order(models.Model):
-    SERVICES = (
-        ("دروازه", "دروازه"),
-        ("کلکین", "کلکین"),
-        ("سی ان سی", "سی ان سی"),
-        ("پرس", "پرس"),
-        ("ضد سرقت", "ضد سرفت"),
-    )
     DIRECTION = (
         ("راست", "راست"),
         ("چپ", "چپ"),
     )
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    service_name = models.CharField(max_length=50, choices=SERVICES, verbose_name="خدمات")
+    service_name = models.ForeignKey(Category, on_delete=models.CASCADE)
     height = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="قد", null=True, blank=True)
     width = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="بر", null=True, blank=True)
     depth = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="عمق", null=True, blank=True)
