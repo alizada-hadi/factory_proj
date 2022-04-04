@@ -10,6 +10,10 @@ class Category(models.Model):
     name = models.CharField(max_length=200)
 
 
+    def __str__(self):
+        return f"{self.id}"
+
+
 
 class Order(models.Model):
     DIRECTION = (
@@ -21,39 +25,36 @@ class Order(models.Model):
     height = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="قد", null=True, blank=True)
     width = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="بر", null=True, blank=True)
     depth = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="عمق", null=True, blank=True)
-    direction = models.CharField(max_length=30, choices=DIRECTION, default="راست")
+    direction = models.CharField(max_length=30, choices=DIRECTION, default="راست", null=True,  blank=True)
     quantity = models.DecimalField(max_digits=6, decimal_places=2, default=0, verbose_name="مقدار / تعداد")
     price = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="قیمت فی واحد")
-    paid = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="مقدار رسید")
-    remain = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="مقدار باقی مانده")
-    total_amount = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="مجموع پول")
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="مجموع")
+    paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="مقدار پرداخت شده")
+    remain_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="مقدار باقی مانده")
     type = models.CharField(max_length=200, verbose_name="نوعیت کار")
-    order_date = jmodels.jDateField(verbose_name="تاریخ فرمایش")
+    order_date = jmodels.jDateField(auto_now_add=True)
 
 
     def save(self, *args, **kwargs):
-        if not self.total_amount:
-            self.total_amount = self.quantity * self.price
-        if not self.remain:
-            self.remain = self.total_amount - self.paid
+        if not self.total:
+            self.total = float(self.quantity) * float(self.price)
+        if not self.remain_amount:
+            self.remain_amount = float(self.quantity) * float(self.price) - float(self.paid_amount)
+
         super().save(*args, **kwargs)
 
-    def total(self):
-        return self.total_amount
 
     def __str__(self):
-        return self.type.customer.name
+        return f"{self.service_name.name}"
 
 
-class Payment(models.Model):
-    employee = models.ForeignKey(Employee, on_delete=models.SET_NULL, null=True, verbose_name="نام مشتری")
-    order = models.ForeignKey(Order, on_delete=models.SET_NULL, null=True)
+class OrderDetail(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, verbose_name="توضیح پرداخت", null=True, blank=True)
-    price_per_unit = models.DecimalField(max_digits=4, decimal_places=2, default=0, verbose_name="میزان دستمزد")
+    price = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="قیمت فی واحد")
     total = models.DecimalField(max_digits=4, decimal_places=2, default=0, verbose_name="مجموع")
     paid_amount = models.DecimalField(max_digits=4, decimal_places=2, default=0, verbose_name="مقدار پرداخت شده")
     remain_amount = models.DecimalField(max_digits=4, decimal_places=2, default=0, verbose_name="مقدار باقی مانده")
-
 
     def save(self, *args, **kwargs):
         if not self.total:
@@ -65,4 +66,4 @@ class Payment(models.Model):
 
     
     def __str__(self):
-        return f"{self.employee.first_name}'s pay "
+        return f"order detail {self.id}"

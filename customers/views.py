@@ -2,7 +2,7 @@ from multiprocessing import Event
 from django.shortcuts import redirect, render
 
 from customers.models import Customer, CustomerEvent, FinanceDetail
-from orders.models import Order
+from orders.models import Order, OrderDetail, Category
 from .forms import CustomerForm, CustomerEventForm
 from orders.forms import OrderForm
 from django.contrib import messages
@@ -72,52 +72,46 @@ def customer_delete_view(request, pk):
 def customer_order_view(request, pk):
     customer = Customer.objects.get(pk=pk)
     orders = customer.order_set.all()
+    categories = Category.objects.all()
     if request.method == "POST":
-        work_type = request.POST.get("service_name")
-        height = request.POST.get("height")
-        width = request.POST.get("width")
-        depth = request.POST.get("depth")
-        direction = request.POST.get("direction")
-        quantity = request.POST.get("quantity")
+        category = Category.objects.get(name = request.POST.get("categories"))
+        quantity = request.POST.get("qty")
         price = request.POST.get("price")
-        paid = request.POST.get("paid")
-        type_of_work = request.POST.get("type")
-        date = request.POST.get("order_date")
-        
-        service_name = "دروازه"
-        if work_type == "door":
-            service_name = "دروازه"
-        elif work_type == "window":
-            service_name = "کلکین"
-        elif work_type == "cnc":
-            service_name = "سی ان سی"
-        elif work_type == "press":
-            service_name = "پرس"
-        elif work_type == "zdoor":
-            service_name = 'ضد سرقت'
-        else:
-            service_name = ""
-        obj = Order.objects.create(
+        paid  = request.POST.get("paid_amount")
+        work_type = request.POST.get("type")
+        direction = request.POST.get("direction")
+        height = request.POST.get("height")
+        if height == "":
+            height = float(0)
+        print(f"height is one {height}")
+        width = request.POST.get("width")
+        if width == "":
+            width = float(0)
+        depth = request.POST.get("depth")
+        if depth == "":
+            depth = float(0)
+        try:
+            Order.objects.create(
             customer=customer, 
-            service_name=service_name,
-            height=height,
+            service_name=category, 
+            height = height, 
             width=width, 
             depth=depth, 
             direction=direction, 
-            quantity=float(quantity),
-            price=float(price), 
-            paid=float(paid), 
-            type=type_of_work, 
-            order_date=date
-        )
-        if obj:
-            messages.success(request, f"فرمایش جدید برای مشتری {customer.name} اضافه شد.")
-
-
+            quantity=quantity, 
+            price=price, 
+            type=work_type, 
+            paid_amount = paid
+            )
+            messages.success(request, "فرمایش جدید ثبت سیستم گردید. ")
+        except:
+            messages.error(request, "مشکلی رخ داد، لطفا دوباره تلاش کنید.")
+            
         return redirect("customer-order-create", customer.pk)
     context = {
         "customer" : customer, 
-        "orders" : orders
+        "orders" : orders, 
+        "categories" : categories
     }
     return render(request, "customers/orders/create.html", context)
 
@@ -131,34 +125,17 @@ def customer_report_view(request,pk):
     total_amount = 0
     paid = 0
     remain = 0
-
-    events = customer.customerevent_set.all()
-    financeDetails = customer.financedetail_set.all()
-    for i in orders:
-        total_amount += i.total_amount
-        paid += i.paid
-        remain += i.remain
-
-
-    if request.method == "POST":
-        title = request.POST.get("title")
-        date = request.POST.get("date")
-        event = CustomerEvent.objects.create(
-            customer=customer, 
-            title=title, 
-            event_finish_at=date
-        )
-        if event:
-            messages.success(request, "واقعه جدید برای مشتری فوق ثبت شد. ")
-            return redirect("customer-report", customer.pk)
+    for order in orders:
+        total_amount += order.total
+        paid += order.paid_amount
+        remain += order.remain_amount
     context = {
         "customer" : customer, 
         "count" : count, 
-        "total" : total_amount, 
+        "total_amount" : total_amount, 
         "paid" : paid, 
-        'remain' : remain, 
-        "events" : events, 
-        "details" : financeDetails
+        "remain" : remain, 
+        "orders" : orders
     }
 
     return render(request, "customers/report.html", context)

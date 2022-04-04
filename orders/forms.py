@@ -9,21 +9,5 @@ class OrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        fields = (
-            'service_name',
-            'height',
-            'width',
-            'depth',
-            'direction',
-            'quantity',
-            'price',
-            'paid',
-            'order_date'
-        )
-        widgets = {
-            'order_date': forms.DateInput(attrs={'type' : 'date'})
-        }
-
-        def __init__(self, *args, **kwargs):
-            super(OrderForm, self).__init__(*args, **kwargs)
-            self.fields['order_date'] = SplitJalaliDateTimeField(label="تاریخ مراجعه", widget=AdminSplitJalaliDateTime)
+        fields = ['height']
+        
