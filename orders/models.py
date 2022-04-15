@@ -27,7 +27,7 @@ class Order(models.Model):
     depth = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="عمق", null=True, blank=True)
     direction = models.CharField(max_length=30, choices=DIRECTION, default="راست", null=True,  blank=True)
     quantity = models.DecimalField(max_digits=6, decimal_places=2, default=0, verbose_name="مقدار / تعداد")
-    price = models.DecimalField(max_digits=10, decimal_places=4, default=0, verbose_name="قیمت فی واحد")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="قیمت فی واحد")
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="مجموع")
     paid_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="مقدار پرداخت شده")
     remain_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="مقدار باقی مانده")

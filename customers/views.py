@@ -1,6 +1,6 @@
 from multiprocessing import Event
 from django.shortcuts import redirect, render
-
+from decimal import Decimal
 from customers.models import Customer, CustomerEvent, FinanceDetail
 from orders.models import Order, OrderDetail, Category
 from .forms import CustomerForm, CustomerEventForm
@@ -82,14 +82,13 @@ def customer_order_view(request, pk):
         direction = request.POST.get("direction")
         height = request.POST.get("height")
         if height == "":
-            height = float(0)
-        print(f"height is one {height}")
+            height = Decimal(0)
         width = request.POST.get("width")
         if width == "":
-            width = float(0)
+            width = Decimal(0)
         depth = request.POST.get("depth")
         if depth == "":
-            depth = float(0)
+            depth = Decimal(0)
         try:
             Order.objects.create(
             customer=customer, 
@@ -121,6 +120,7 @@ def customer_order_view(request, pk):
 def customer_report_view(request,pk):
     customer = Customer.objects.get(pk=pk)
     orders = customer.order_set.all()
+    categories = Category.objects.all()
     count = orders.count()
     total_amount = 0
     paid = 0
@@ -135,10 +135,65 @@ def customer_report_view(request,pk):
         "total_amount" : total_amount, 
         "paid" : paid, 
         "remain" : remain, 
-        "orders" : orders
+        "orders" : orders, 
+        "categories" : categories
     }
 
     return render(request, "customers/report.html", context)
+
+
+# order update view
+
+def update_order_view(request):
+    if request.method == 'POST':
+        order = Order.objects.get(pk=request.POST.get("order"))
+        customer = Customer.objects.get(pk=request.POST.get("customer"))
+        category = Category.objects.get(pk=request.POST.get("category"))
+        qty = request.POST.get("qty")
+        price = request.POST.get("price")
+        paid_amount = request.POST.get("pre-paid")
+        work_type = request.POST.get("type")
+        direction = request.POST.get("direction")
+        height = request.POST.get("height")
+        width = request.POST.get("width")
+        depth = request.POST.get("depth")
+
+
+        try:
+            order.customer = customer
+            order.service_name = category
+            order.height = height
+            order.width = width
+            order.depth = depth
+            order.direction = direction
+            order.quantity = qty
+            order.price = price
+            order.paid_amount = paid_amount
+            order.type = work_type
+            order.total = Decimal(qty) * Decimal(price)
+            order.remain_amount = (Decimal(qty) * Decimal(price)) - Decimal(paid_amount)
+            order.save()
+
+            messages.success(request, f"فرمایش نمبر {order.id} موفقانه ویرایش گردید.")
+        except:
+            messages.error(request, "مشکلی رخ داد.لطفا دوباره تلاش کنید.")
+        return redirect("customer-report", order.customer.id)
+
+
+
+# order delete view
+
+def delete_order_view(request):
+    if request.method == "POST":
+        order = Order.objects.get(pk=request.POST.get("order"))
+        customer = Customer.objects.get(pk=request.POST.get("customer"))
+        try:
+            order.delete()
+            messages.success(request, "فرمایش ثبت شده از سیستم حذف گردید.")
+        except:
+            messages.error(request, "مشکلی رخ داد لطفا دوباره تلاش کنید.")
+        return redirect("customer-order-create", customer.pk)
+
 
 
 

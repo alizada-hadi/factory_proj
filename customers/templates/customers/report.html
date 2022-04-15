@@ -31,6 +31,112 @@
 
 
 {% block content %}
+<!-- update order modal start -->
+<div class="modal fade" id="update-order" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title mt-0" id="update-order-modal-header"></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'update-order' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" value="" name="order" id="order_id">
+                    <input type="hidden" value="" name="customer" id="customer_id">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <label for="" class="font-size-17">محصولات</label>
+                            <select name="category" id="categories" class="form-control form-control-lg">
+                                {% for category in categories %}
+                                    <option value="{{category.id}}">{{category.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="" class="font-size-17">مقدار</label>
+                            <input type="number" class="form-control form-control-lg" name="qty" id="quantity">
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-lg-6">
+                            <label for="" class="font-size-17">قیمت فی دانه</label>
+                            <input type="number" class="form-control form-control-lg" name="price" id="price">
+                        </div>
+                        <div class="col-lg-6">
+                            <label for="" class="font-size-17">مقدار پیش پرداخت</label>
+                            <input type="number" class="form-control form-control-lg" name="pre-paid" id="pre_paid">
+                        </div>
+                    </div>
+
+                    <div class="row mt-2">
+                        <div class="col-lg-6">
+                            <label for="" class="font-size-17">توضیحات</label>
+                            <input type="text" name="type" id="type" class="form-control form-control-lg" placeholder="هشت ملی ساده">
+                        </div>
+                        <div class="col-lg-6" id="direction">
+                            <label for="" class="font-size-17">سمت</label>
+                            <select name="direction" class="form-control form-control-lg">
+                                <option value="right">راست</option>
+                                <option value="left">چپ</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-lg-6" id="height">
+                            <label for="" class="font-size-17">ارتفاع</label>
+                            <input type="number" name="height" id="order_height" class="form-control form-control-lg" placeholder="175cm">
+                        </div>
+                        <div class="col-lg-6" id="width">
+                            <label for="" class="font-size-17">عرض / بر</label>
+                            <input type="number" name="width" id="order_width" class="form-control form-control-lg" placeholder="15cm">
+                        </div>
+                    </div>
+                    <div class="row mt-2 mb-3">
+                        <div class="col-lg-6" id="depth">
+                            <label for="" class="font-size-17">عمق</label>
+                            <input type="number" name="depth" id="order_depth" class="form-control form-control-lg" placeholder="5cm">
+                        </div>
+                    </div>
+                    <button class="mt-2 btn btn-light btn-lg">ذخیره کردن</button>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- update order modal end -->
+
+<!-- delete order modal start -->
+<div class="modal fade" id="delete-order" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title mt-0" id="delete-order-modal-header"></h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{% url 'order-delete' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="order" id="delete_order" value="">
+                    <input type="hidden" name="customer" id="delete_customer_order" value="">
+                    <p class="alert alert-danger text-center font-size-18">
+                        آیا میخواهید این فرمایش را از سیستم حذف نمایید. 
+                    </p>
+
+                    <button class="btn btn-danger btn-lg mt-2" type="submit">بلی، خذف</button>
+                    <button class="btn btn-primary btn-lg mt-2" type="button">نخیر</button>
+                </form>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<!-- delete order modal end -->
+
 <div class="row">
     <div class="col-lg-12">
         <div class="card">
@@ -91,6 +197,7 @@
                                     <a class="dropdown-item font-size-17" href="#">دانلود گزارش</a>
                                     <a class="dropdown-item font-size-17" href="#">ثبت معامله جدید</a>
                                     <a class="dropdown-item font-size-17" href="#">ثبت رویداد جدید</a>
+                                    <a class="dropdown-item font-size-17" href="{% url 'customer-order-create' customer.pk %}">ثبت فرمایش جدید</a>
                                 </div>
                             </div>
                         </div>
@@ -127,18 +234,37 @@
                         <tr>
                             <td class="font-size-16">{{forloop.counter}}</td>
                             <td class="font-size-16">#{{order.id}}</td>
-                            <td class="font-size-16">{{order.service_name.name}}</td>
+                            <td class="font-size-16">{{order.service_name.name}} - {{order.type}}</td>
                             <td class="font-size-16">{{order.quantity}}</td>
                             <td class="font-size-16">{{order.price}}</td>
                             <td class="font-size-16">{{order.total}}</td>
                             <td class="font-size-16">{{order.paid_amount}}</td>
                             <td class="font-size-16">{{order.remain_amount}}</td>
                             <td class="font-size-16">
-                                <button class="btn btn-outline-danger btn-sm">
-                                    <i class="bx bx-trash align-middle font-size-18"></i>
-                                </button>
-                                <button class="btn btn-outline-primary btn-sm">
+                                <button
+                                data-toggle="modal"
+                                data-target="#update-order"
+                                data-id="{{order.id}}"
+                                data-service="{{order.service_name}} - {{order.type}}"
+                                data-quantity="{{order.quantity}}" 
+                                data-price="{{order.price}}"
+                                data-paid_amount="{{order.paid_amount}}"
+                                data-type="{{order.type}}"
+                                data-direction="{{order.direction}}"
+                                data-height="{{order.height}}"
+                                data-width="{{order.width}}"
+                                data-depth="{{order.depth}}"
+                                data-customer="{{order.customer.id}}"
+                                class="btn btn-outline-primary btn-sm update-btns">
                                     <i class="bx bx-edit align-middle font-size-18"></i>
+                                </button>
+                                <button 
+                                data-target="#delete-order"
+                                data-toggle="modal"
+                                data-id="{{order.id}}"
+                                data-customer="{{order.customer.id}}"
+                                class="btn btn-outline-danger btn-sm delete-btns">
+                                    <i class="bx bx-trash align-middle font-size-18"></i>
                                 </button>
                             </td>
                         </tr>
@@ -165,16 +291,68 @@
 
   </div>
 
-
-
-
-
-
-
-
 <script>
-    $(document).ready(function () {
-        
-    });
+    const buttons = [...document.getElementsByClassName("update-btns")]
+    const header = document.getElementById("update-order-modal-header")
+    const quantity = document.getElementById("quantity")
+    const price = document.getElementById("price")
+    const pre = document.getElementById("pre_paid")
+    const type = document.getElementById("type")
+    const direction = document.getElementById("direction")
+    const height = document.getElementById("order_height")
+    const width = document.getElementById("order_width")
+    const depth = document.getElementById("order_depth")
+    const order = document.getElementById("order_id")
+    const customer  = document.getElementById("customer_id")
+
+    // deleteing attributes
+    const delete_btns = [...document.getElementsByClassName("delete-btns")]
+    const delete_header = document.getElementById("delete-order-modal-header")
+    const delete_order = document.getElementById("delete_order")
+    const customer_order_delete = document.getElementById("delete_customer_order")
+    
+    buttons.forEach(btn => btn.addEventListener("click", () => {
+        const order_id = btn.getAttribute("data-id")
+        const qty = btn.getAttribute("data-quantity")
+        const unit_price = btn.getAttribute("data-price")
+        const bayana = btn.getAttribute("data-paid_amount")
+        const type_of_work = btn.getAttribute("data-type")
+        const dir = btn.getAttribute("data-direction")
+        const h = btn.getAttribute("data-height")
+        const w = btn.getAttribute("data-width")
+        const d = btn.getAttribute("data-depth")
+        const cus = btn.getAttribute("data-customer")
+
+
+        header.innerHTML = `
+        ویرایش فرمایش نمبر ${order_id}
+        `
+
+        order.value = order_id
+        customer.value = cus
+        quantity.value = qty
+        price.value = unit_price
+        pre.value = bayana
+        type.value = type_of_work
+        direction.value = dir
+        height.value = h
+        width.value = w
+        depth.value = d
+
+    }))
+
+
+    delete_btns.forEach(btn => btn.addEventListener("click", () =>{
+        const id = btn.getAttribute("data-id")
+        const del_cus = btn.getAttribute("data-customer")
+        delete_header.innerHTML = `
+            حذف فرمایش نمبر #${id}
+        `
+        delete_order.value = id
+        customer_order_delete.value = del_cus
+
+
+    }))
+
 </script>
 {% endblock content %}

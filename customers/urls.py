@@ -13,6 +13,9 @@ urlpatterns = [
     path("customer/event/<str:pk>/update/", views.customer_event_update_view, name="update-event"), 
     path("customer/event/<str:pk>/delete/", views.customer_event_delete_view, name="event-delete"),
      
-    path("customer/<str:pk>/add/finance/", views.add_finance_detail_view, name="add-finance-detail")
+    path("customer/<str:pk>/add/finance/", views.add_finance_detail_view, name="add-finance-detail"), 
 
+    # update and delete order
+    path("order/edit/", views.update_order_view, name="update-order"), 
+    path("order/delete/", views.delete_order_view, name="order-delete")
 ]
